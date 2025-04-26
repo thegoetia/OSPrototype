@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CamaleonOS Desktop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('https://images3.alphacoders.com/218/218285.jpg') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Ubuntu', sans-serif;
+      color: white;
+    }
+
+    html, body, * {
+      cursor: url('https://cur.cursors-4u.net/cursors/images4/cur330.png') 25 25, auto !important;
+      user-select: none;
+    }
+
+    .taskbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 24px;
+      z-index: 10;
+    }
+
+    .taskbar img {
+      width: 16px;
+      height: 16px;
+      transition: filter 0.3s ease, transform 0.3s ease;
+    }
+
+    .taskbar img:hover {
+      filter: brightness(1.5);
+      transform: scale(1.1);
+    }
+
+    .shutdown-btn {
+      background: url('https://img.icons8.com/ios-glyphs/30/ffffff/shutdown.png') no-repeat center center;
+      background-size: contain;
+      width: 16px;
+      height: 16px;
+      border: none;
+      transition: filter 0.3s ease, transform 0.3s ease;
+    }
+
+    .shutdown-btn:hover {
+      filter: brightness(1.5);
+      transform: scale(1.1);
+    }
+
+    #clock {
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    .startup-fade {
+      position: fixed;
+      inset: 0;
+      background: black;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 1s ease;
+      pointer-events: none;
+    }
+
+    .startup-fade.hidden {
+      opacity: 0;
+    }
+
+    .context-menu {
+      position: absolute;
+      background: rgba(30, 30, 30, 0.9);
+      border-radius: 6px;
+      padding: 10px 0;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      width: 180px;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .context-menu.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .context-menu button {
+      background: none;
+      border: none;
+      color: white;
+      text-align: left;
+      padding: 10px 16px;
+      width: 100%;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: 'Ubuntu', sans-serif;
+      transition: background 0.2s ease;
+    }
+
+    .context-menu button:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .window {
+      width: 600px;
+      background-color: rgba(30, 30, 30, 0.9);
+      border-radius: 10px;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+      display: none;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Janela "System Properties" */
+#systemPropertiesWindow {
+  width: 300px; /* Tamanho específico para a janela de propriedades do sistema */
+  height: 200px; /* Ajuste da altura */
+}
+    .window.show {
+      display: block;
+      opacity: 1;
+    }
+
+    .window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      cursor: move;
+    }
+
+    .window-header h2 {
+      margin: 0;
+      color: white;
+      font-size: 18px;
+    }
+
+    .window-header .close-btn {
+      color: white;
+      font-size: 18px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .window-header .close-btn:hover {
+      opacity: 0.7;
+      transform: scale(1.1);
+    }
+
+    .wallpaper-window img {
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .wallpaper-window img:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="startup-fade" id="startup-fade"></div>
+
+  <div class="taskbar">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/wifi.png" alt="Wi-Fi" />
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/medium-volume.png" alt="Volume" />
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/battery--v1.png" alt="Battery" />
+    <button class="shutdown-btn" onclick="shutdown()"></button>
+    <span id="clock">00:00</span>
+  </div>
+
+  <div class="context-menu" id="contextMenu">
+    <button onclick="openWallpaperWindow()">Change Wallpaper</button>
+    <button onclick="openSystemProperties()">System Properties</button>
+  </div>
+
+  <!-- Janela de Wallpaper -->
+  <div class="window wallpaper-window" id="wallpaperWindow">
+    <div class="window-header" id="wallpaperHeader">
+      <h2>Change Wallpaper</h2>
+      <button class="close-btn" onclick="closeWallpaperWindow()">X</button>
+    </div>
+    <div>
+      <img src="https://wallpapers.com/images/hd/tropical-leaves-desktop-8611f6flac8w831v.jpg" onclick="changeWallpaper('https://wallpapers.com/images/hd/tropical-leaves-desktop-8611f6flac8w831v.jpg')" />
+      <img src="https://wallpapers.com/images/hd/1920x1080-hd-cat-green-eyes-8vn05ebmuhu8rwrc.jpg" onclick="changeWallpaper('https://wallpapers.com/images/hd/1920x1080-hd-cat-green-eyes-8vn05ebmuhu8rwrc.jpg')" />
+      <img src="https://c.pxhere.com/images/ed/62/7eead6acda6ba2ed10db9cf4f607-1635454.jpg!d" onclick="changeWallpaper('https://c.pxhere.com/images/ed/62/7eead6acda6ba2ed10db9cf4f607-1635454.jpg!d')" />
+      <img src="https://img.odcdn.com.br/wp-content/uploads/2024/12/tucano-ave-animal-natureza-passaro-1920x1080.jpg" onclick="changeWallpaper('https://img.odcdn.com.br/wp-content/uploads/2024/12/tucano-ave-animal-natureza-passaro-1920x1080.jpg')" />
+      <img src="https://escolaeducacao.com.br/wp-content/uploads/2025/01/ovelha-folha-kittisak-songprakob-getty-images.jpg" onclick="changeWallpaper('https://escolaeducacao.com.br/wp-content/uploads/2025/01/ovelha-folha-kittisak-songprakob-getty-images.jpg')" />
+    </div>
+  </div>
+
+  <!-- Janela de System Properties -->
+  <div class="window" id="systemPropertiesWindow">
+    <div class="window-header" id="systemHeader">
+      <h2>System Properties</h2>
+      <button class="close-btn" onclick="closeSystemProperties()">X</button>
+    </div>
+    <div style="color:white;">
+      <p>CamaleonOS v1.0</p>
+      <p>Build: Alpha</p>
+      <p id="os-info"></p>
+    </div>
+  </div>
+
+  <script>
+    let offsetX, offsetY, isDragging = false;
+
+    // Função para tornar as janelas arrastáveis
+function makeDraggable(windowId, headerId) {
+  const windowElement = document.getElementById(windowId);
+  const headerElement = document.getElementById(headerId);
+
+  let offsetX = 0;
+  let offsetY = 0;
+  let isDragging = false;
+
+  headerElement.addEventListener('mousedown', function(e) {
+    isDragging = true;
+    offsetX = e.clientX - windowElement.getBoundingClientRect().left;
+    offsetY = e.clientY - windowElement.getBoundingClientRect().top;
+
+    function onMouseMove(e) {
+      if (isDragging) {
+        windowElement.style.left = `${e.clientX - offsetX}px`;
+        windowElement.style.top = `${e.clientY - offsetY}px`;
+      }
+    }
+
+    function onMouseUp() {
+      isDragging = false;
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    }
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+}
+
+
+    // Torna as janelas "wallpaperWindow" e "systemPropertiesWindow" arrastáveis
+    makeDraggable('wallpaperWindow', 'wallpaperHeader');
+    makeDraggable('systemPropertiesWindow', 'systemHeader');
+
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function shutdown() {
+      document.body.innerHTML +=  
+        `<div style=" 
+          position: fixed; 
+          inset: 0; 
+          backdrop-filter: blur(8px); 
+          background: rgba(0, 0, 0, 0.4); 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          font-size: 24px; 
+          font-family: 'Ubuntu', sans-serif; 
+          color: white; 
+          z-index: 9999; 
+          opacity: 0; 
+          transition: opacity 0.5s ease;">
+          <div id="shutdown-message">Shutting down...</div>
+        </div>`;
+      const overlay = document.querySelector("body > div:last-child");
+      setTimeout(() => overlay.style.opacity = 1, 10);
+      setTimeout(() => window.location.href = "https://www.google.com", 3000);
+    }
+
+    window.addEventListener('load', () => {
+      document.getElementById('startup-fade').classList.add('hidden');
+      setTimeout(() => document.getElementById('startup-fade').remove(), 1000);
+    });
+
+    document.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      const menu = document.getElementById('contextMenu');
+      menu.style.left = `${e.clientX}px`;
+      menu.style.top = `${e.clientY}px`;
+      menu.classList.add('active');
+    });
+
+    document.addEventListener("click", () => {
+      document.getElementById('contextMenu').classList.remove('active');
+    });
+
+    function openWallpaperWindow() {
+      const win = document.getElementById('wallpaperWindow');
+      win.style.display = 'block';
+      setTimeout(() => win.classList.add('show'), 10);
+    }
+
+    function closeWallpaperWindow() {
+      const win = document.getElementById('wallpaperWindow');
+      win.classList.remove('show');
+      setTimeout(() => win.style.display = 'none', 300);
+    }
+
+    function openSystemProperties() {
+      const win = document.getElementById('systemPropertiesWindow');
+      win.style.display = 'block';
+      setTimeout(() => win.classList.add('show'), 10);
+
+      const osInfo = `
+        <p>Processor: ${navigator.hardwareConcurrency} cores</p>
+        <p>Memory: ${Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)} MB</p>
+        <p>Platform: ${navigator.platform}</p>
+      `;
+      document.getElementById('os-info').innerHTML = osInfo;
+    }
+
+    function closeSystemProperties() {
+      const win = document.getElementById('systemPropertiesWindow');
+      win.classList.remove('show');
+      setTimeout(() => win.style.display = 'none', 300);
+    }
+
+    function changeWallpaper(url) {
+      document.body.style.backgroundImage = `url(${url})`;
+      closeWallpaperWindow();
+    }
+  </script>
+</body>
+</html>
