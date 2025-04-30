@@ -7,54 +7,54 @@
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    /* Garante que todos os elementos na página usem o cursor personalizado */
+
     html, body, * {
       cursor: url('https://cur.cursors-4u.net/cursors/images4/cur330.png') 16 16, auto !important;
     }
 
-    /* Barra de tarefas */
+
     .taskbar {
       display: flex;
-      justify-content: flex-end;  /* Alinha os ícones à direita */
+      justify-content: flex-end;  
       align-items: center;
-      gap: 8px;  /* Diminui o espaçamento entre os ícones */
-      padding: 4px 12px;  /* Diminui o padding para um visual mais compacto */
+      gap: 8px;  
+      padding: 4px 12px; 
       background-color: rgba(0, 0, 0, 0.5);
       position: absolute;
       top: 0;
-      right: 0;  /* Posiciona a barra de tarefas no canto superior direito */
-      height: 30px;  /* Diminui a altura da barra */
+      right: 0;  
+      height: 30px; 
       z-index: 10;
     }
 
     .taskbar img {
-      width: 20px;  /* Reduz o tamanho dos ícones */
-      height: 20px;  /* Reduz o tamanho dos ícones */
+      width: 20px; 
+      height: 20px;  
       transition: filter 0.3s ease, transform 0.3s ease;
       cursor: url('https://cur.cursors-4u.net/cursors/images4/cur330.png') 16 16, auto !important;
     }
 
     .taskbar img:hover {
       filter: brightness(1.5);
-      transform: scale(1.1);  /* Aumenta um pouco o tamanho dos ícones ao passar o mouse */
+      transform: scale(1.1);  
     }
 
-    /* Evitar que qualquer outro elemento resete o cursor */
+   
     button, input, img, span, div, a, .taskbar * {
       cursor: url('https://cur.cursors-4u.net/cursors/images4/cur330.png') 16 16, auto !important;
     }
 
-    /* Garante que o cursor persista nos elementos de interação */
+
     button, input, img, span, div, a {
       cursor: url('https://cur.cursors-4u.net/cursors/images4/cur330.png') 16 16, auto !important;
     }
 
-    /* Estilo para o botão de shutdown com imagem */
+
     .shutdown-btn {
       background: url('https://cdn.discordapp.com/attachments/1125909892646043710/1361226151711735858/New20Project2011.png?ex=67fdfc24&is=67fcaaa4&hm=2c07f488a8200c0040c6e67485d75cc0e75310142300b709f52381ee6e257ecb&') no-repeat center center;
       background-size: contain;
-      width: 20px;  /* Ajusta o tamanho do botão */
-      height: 20px;  /* Ajusta o tamanho do botão */
+      width: 20px;  
+      height: 20px;  
       border: none;
       cursor: url('https://cur.cursors-4u.net/cursors/images4/cur330.png') 16 16, auto !important;
       transition: filter 0.3s ease, transform 0.3s ease;
@@ -62,10 +62,10 @@
 
     .shutdown-btn:hover {
       filter: brightness(1.5);
-      transform: scale(1.1);  /* Efeito de aumentar o botão ao passar o mouse */
+      transform: scale(1.1); 
     }
 
-    /* Estilo para a tela de shutdown */
+   
     .shutdown-overlay {
       position: fixed;
       top: 0;
@@ -73,8 +73,8 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);  /* Borrão na tela */
-      display: none;  /* Inicialmente escondido */
+      backdrop-filter: blur(10px);  
+      display: none;  
       justify-content: center;
       align-items: center;
       z-index: 1000;
@@ -91,10 +91,10 @@
 
 </head>
 <body>
-  <!-- Overlay escuro (aparece quando está logado) -->
+ 
   <div class="fade-overlay hidden"></div>
 
-  <!-- Barra de tarefas -->
+  
   <div class="taskbar">
     <img src="https://cdn.discordapp.com/attachments/1125909892646043710/1361222311721570335/New20Project208.png?ex=67fdf891&is=67fca711&hm=039f12df75990521ba11cf3d42f83b25f90f83abaa35b1f8485c9420a4f17abd&" alt="Wi-Fi" />
     <img src="https://cdn.discordapp.com/attachments/1125909892646043710/1361224792056795187/New20Project2010.png?ex=67fdfae0&is=67fca960&hm=3742277d5412a5ce7143dc2775eaf2a192855daba970d2c2eb6afd55bb80125b&" alt="Volume" />
@@ -102,14 +102,14 @@
     <span id="clock">--:--</span>
   </div>
 
-  <!-- Seleção de usuários com o carrossel -->
+ 
   <div class="user-selection">
     <div class="carousel-wrapper">
       <div class="user-carousel" id="user-carousel"></div>
     </div>
   </div>
 
-  <!-- Seção de login que aparece ao clicar em um usuário -->
+ 
   <div class="login-section">
     <div class="user-info">
       <img id="selected-user-img" alt="User Image" />
@@ -120,37 +120,37 @@
     <button id="back-btn" class="back-btn">Voltar</button>
   </div>
 
-  <!-- Botão de desligamento -->
+ 
   <button class="shutdown-btn"></button>
 
-  <!-- Tela de Shutdown -->
+  
   <div class="shutdown-overlay">
     <div class="shutdown-text">Shutting down...</div>
   </div>
 
-  <!-- Script JavaScript -->
+
   <script src="script.js"></script>
   
-  <!-- Configuração para voltar ao painel de usuários -->
+
   <script>
     document.getElementById("back-btn").addEventListener("click", function() {
-      goBack();  // Função para voltar à tela de login
+      goBack();  
     });
 
-    // Função para o botão de shutdown
+    
     document.querySelector(".shutdown-btn").addEventListener("click", function() {
-      // Exibe o overlay de shutdown e o texto
+      
       const shutdownOverlay = document.querySelector(".shutdown-overlay");
       const shutdownText = document.querySelector(".shutdown-text");
 
       shutdownOverlay.style.display = "flex";
       setTimeout(() => {
-        shutdownText.style.opacity = 1;  // Faz o texto aparecer suavemente
+        shutdownText.style.opacity = 1;  
       }, 100);
 
-      // Redireciona para o Google após 3 segundos
+
       setTimeout(() => {
-        window.location.href = "https://www.google.com";  // Redireciona para o Google
+        window.location.href = "https://www.google.com"; 
       }, 3000);
     });
   </script>
