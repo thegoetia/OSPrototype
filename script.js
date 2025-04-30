@@ -49,8 +49,7 @@ function renderUsers() {
       }
     };
     card.ondblclick = () => {
-      // Redireciona para uma nova página
-      window.location.href = "os.html"; // Substitua pela URL de sua escolha
+      window.location.href = "os.html"; 
     };
     carousel.appendChild(card);
   });
@@ -87,7 +86,7 @@ function openLoginScreen() {
   selectedUserImg.src = user.img;
   selectedUserName.textContent = user.name;
 
-  // Adicionando a animação de brilho à imagem do usuário selecionado
+  
   selectedUserImg.classList.add("shine");
 
   userInfo.classList.add("visible");
@@ -118,17 +117,6 @@ function tickClock() {
 setInterval(tickClock, 1000);
 renderUsers();
 
-// Função de verificação de PIN
-passwordInput.addEventListener("keypress", function(event) {
-  if (event.key === "Enter") {
-    const pin = passwordInput.value;
-    if (pin === "1234") {
-      alert(`Welcome ${users[currentIndex].name}!`);
-      goBack(); // Voltar à tela de seleção após login bem-sucedido
-    } else {
-      loginError.textContent = "PIN inválido. Tente novamente.";
-      passwordInput.value = ""; // Limpar o campo de senha
-      passwordInput.focus(); // Focar no campo novamente
-    }
+
   }
 });
