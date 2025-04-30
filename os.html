@@ -133,10 +133,10 @@
       transition: opacity 0.3s ease;
     }
 
-    /* Janela "System Properties" */
+    
 #systemPropertiesWindow {
-  width: 300px; /* Tamanho específico para a janela de propriedades do sistema */
-  height: 200px; /* Ajuste da altura */
+  width: 300px;
+  height: 200px; 
 }
     .window.show {
       display: block;
@@ -201,7 +201,7 @@
     <button onclick="openSystemProperties()">System Properties</button>
   </div>
 
-  <!-- Janela de Wallpaper -->
+  
   <div class="window wallpaper-window" id="wallpaperWindow">
     <div class="window-header" id="wallpaperHeader">
       <h2>Change Wallpaper</h2>
@@ -216,7 +216,7 @@
     </div>
   </div>
 
-  <!-- Janela de System Properties -->
+
   <div class="window" id="systemPropertiesWindow">
     <div class="window-header" id="systemHeader">
       <h2>System Properties</h2>
@@ -232,7 +232,7 @@
   <script>
     let offsetX, offsetY, isDragging = false;
 
-    // Função para tornar as janelas arrastáveis
+
 function makeDraggable(windowId, headerId) {
   const windowElement = document.getElementById(windowId);
   const headerElement = document.getElementById(headerId);
@@ -265,7 +265,7 @@ function makeDraggable(windowId, headerId) {
 }
 
 
-    // Torna as janelas "wallpaperWindow" e "systemPropertiesWindow" arrastáveis
+  
     makeDraggable('wallpaperWindow', 'wallpaperHeader');
     makeDraggable('systemPropertiesWindow', 'systemHeader');
 
