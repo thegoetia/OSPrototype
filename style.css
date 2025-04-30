@@ -268,7 +268,7 @@ input[type="password"]:focus {
   pointer-events: none;
 }
 
-/* Adding smooth transition for blur effect */
+
 .fade-wallpaper {
   filter: blur(5px);
   transition: filter 0.5s ease-out;
@@ -278,7 +278,7 @@ input[type="password"]:focus {
   filter: none;
 }
 
-/* Adicionando a animação de brilho ao usuário selecionado */
+
 .selected-user-img.shine {
   animation: shine 1s ease-out forwards;
 }
